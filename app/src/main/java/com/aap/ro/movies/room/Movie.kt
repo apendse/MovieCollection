@@ -15,10 +15,11 @@ const val sciFi = 128
 const val family = 256
 const val crime = 512
 const val comedy = 1024
+const val western = 2048
 
 @Entity(tableName = "movie")
 data class Movie (
-    @PrimaryKey @ColumnInfo(name = "id") val id: Int,
+    @PrimaryKey @ColumnInfo(name = "id") val id: Int?,
     @ColumnInfo(name = "name") val movieName: String?,
     @ColumnInfo(name = "release_year") val releaseYear: Int?,
     @ColumnInfo(name = "genre") val genre: Int)

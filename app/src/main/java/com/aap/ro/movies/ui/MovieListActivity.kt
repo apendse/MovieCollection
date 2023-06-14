@@ -1,20 +1,18 @@
 package com.aap.ro.movies.ui
 
 import android.os.Bundle
-import androidx.activity.viewModels
-import com.google.android.material.snackbar.Snackbar
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.coroutineScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.aap.ro.movies.R
 import com.aap.ro.movies.databinding.ActivityMovieListBinding
-import com.aap.ro.movies.viewmodel.MovieListViewModel
-import kotlinx.coroutines.launch
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MovieListActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
@@ -34,14 +32,7 @@ class MovieListActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_content_movie_list)
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-
-        binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAnchorView(R.id.fab)
-                .setAction("Action", null).show()
-        }
-
-
+        binding.fab.visibility = View.GONE
     }
 
     override fun onSupportNavigateUp(): Boolean {

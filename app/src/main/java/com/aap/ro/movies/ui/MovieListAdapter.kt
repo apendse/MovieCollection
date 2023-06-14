@@ -1,9 +1,7 @@
 package com.aap.ro.movies.ui
 
-import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
@@ -41,10 +39,11 @@ class MovieListAdapter(private val movieClickListener: MovieClickListener): List
         with(holder.binding) {
             movieTitle.text = movie.name
             movieYear.text = "${movie.yearOfRelease}"
-            genreContainer.removeAllViews()
-            movie.genre.forEach {
-                genreContainer.addView(genreContainer.createChip(it))
-            }
+            genreContainer.addGenreList(movie.genre)
+//            genreContainer.removeAllViews()
+//            movie.genre.forEach {
+//                genreContainer.addView(genreContainer.createChip(it))
+//            }
         }
     }
 

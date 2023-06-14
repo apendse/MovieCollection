@@ -1,13 +1,16 @@
 package com.aap.ro.movies.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.activity.viewModels
+import androidx.annotation.VisibleForTesting
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.coroutineScope
@@ -16,34 +19,46 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.aap.ro.movies.R
 import com.aap.ro.movies.data.MovieVO
-import com.aap.ro.movies.databinding.FragmentFirstBinding
-import com.aap.ro.movies.repository.MovieDatabaseFactory
-import com.aap.ro.movies.repository.MovieRepositoryFactory
+import com.aap.ro.movies.databinding.FragmentMovieListBinding
 import com.aap.ro.movies.viewmodel.MovieListViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.lang.reflect.Modifier.PRIVATE
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
+@AndroidEntryPoint
 class MovieListFragment : Fragment(), MovieClickListener {
 
-    private var _binding: FragmentFirstBinding? = null
-    private val movieListViewModel by viewModels<MovieListViewModel> {
-        MovieListViewModel.Factory
-    }
+    private var _binding: FragmentMovieListBinding? = null
 
-    lateinit var movieListAdapter: MovieListAdapter
+    @VisibleForTesting
+    val movieListViewModel: MovieListViewModel by viewModels()
+
+    private lateinit var movieListAdapter: MovieListAdapter
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("YYYY", "MovieListFragment.onCreate")
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        Log.d("YYYY", "MovieListFragment.onAttach")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("YYYY", "MovieListFragment.onCreateView")
+        _binding = FragmentMovieListBinding.inflate(inflater, container, false)
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -51,8 +66,17 @@ class MovieListFragment : Fragment(), MovieClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initList()
+        binding.addMovie.setOnClickListener {
+            findNavController().navigate(R.id.addMovieFragment)
+        }
         lifecycle.coroutineScope.launch {
             movieListViewModel.loadDataIfNeeded()
+            launch {
+                movieListViewModel.loadingState.collect {
+                    showOrHideSpinner(it)
+                }
+            }
+
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 movieListViewModel.obtainMovieList().collect {
                     populateList(it)
@@ -60,11 +84,14 @@ class MovieListFragment : Fragment(), MovieClickListener {
                 }
             }
         }
-
     }
 
-    private fun populateList(list: List<MovieVO>) {
-        binding.spinnerContainer.visibility = View.GONE
+    @VisibleForTesting
+    fun showOrHideSpinner(isLoading: Boolean) {
+        binding.spinnerContainer.visibility = if (isLoading) { VISIBLE } else { GONE }
+    }
+    @VisibleForTesting(otherwise = PRIVATE)
+    fun populateList(list: List<MovieVO>) {
         movieListAdapter.submitList(list)
     }
 

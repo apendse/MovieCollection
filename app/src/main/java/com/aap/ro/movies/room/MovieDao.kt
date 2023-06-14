@@ -1,7 +1,9 @@
 package com.aap.ro.movies.room
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
@@ -18,7 +20,21 @@ interface MovieDao {
     @Query("SELECT COUNT(*) from Movie")
     fun getMovieCount(): Int
 
+
+    @Query("SELECT * from movie where id = :movieIdParam")
+    fun getMovieDetails(movieIdParam: Int): Flow<Movie>
+
+
+    @Query("SELECT * from movie where id = :movieIdParam")
+    fun getMovieDetailsWithoutFlow(movieIdParam: Int): Movie
+
     @Insert
     fun insertAll(vararg movies: Movie)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(movie: Movie): Long
+
+    @Delete
+    fun deleteMovie(movie: Movie)
 
 }

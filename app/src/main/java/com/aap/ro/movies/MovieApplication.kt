@@ -1,19 +1,16 @@
 package com.aap.ro.movies
 
+//import com.aap.ro.movies.repository.MovieRepositoryFactory
 import android.app.Application
-import androidx.lifecycle.LifecycleCoroutineScope
-import androidx.lifecycle.coroutineScope
-import com.aap.ro.movies.repository.MovieDatabaseFactory
-import com.aap.ro.movies.repository.MovieRepository
-import com.aap.ro.movies.repository.MovieRepositoryFactory
-import com.aap.ro.movies.room.MovieDatabase
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class MovieApplication: Application() {
-    lateinit var movieRepository: MovieRepository
+    //lateinit var movieRepository: MovieRepository
 
     override fun onCreate() {
 
         super.onCreate()
-        movieRepository = MovieRepositoryFactory.getMovieRepository(MovieDatabaseFactory.getMovieDatabase(this))
+        //movieRepository = MovieRepositoryFactory.getMovieRepository(MovieDatabaseFactory.getMovieDatabase(this))
     }
 }

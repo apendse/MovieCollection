@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="dark_background">#1f000000</color>
     <color name="red_200">#ffff7777</color>
+    <color name="movie_red">#EA4B4B</color>
 </resources>

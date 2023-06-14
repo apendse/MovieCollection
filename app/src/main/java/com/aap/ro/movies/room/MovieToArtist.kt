@@ -14,4 +14,4 @@ import androidx.room.PrimaryKey
     ),
     ForeignKey(entity = Movie::class, parentColumns = arrayOf("id"), childColumns = arrayOf("movieId"),
     onDelete = ForeignKey.CASCADE)           ]
-)data class MovieToArtist(@PrimaryKey val id: Int, val movieId: Int, val artistId: Int, val role: String)
+)data class MovieToArtist(@PrimaryKey val id: Int?, val movieId: Int, val artistId: Int, val role: String)

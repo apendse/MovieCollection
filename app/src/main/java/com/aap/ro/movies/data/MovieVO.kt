@@ -1,14 +1,13 @@
 package com.aap.ro.movies.data
 
-import androidx.annotation.StringRes
-
 data class MovieVO(
-                 val id: Int,
-                 val name: String,
-                 val yearOfRelease: Int,
-                 val genre: List<Genre>,
-                 val directors: List<Artist>,
-                 val actors: List<Artist>)
+    val id: Int,
+    val name: String,
+    val yearOfRelease: Int,
+    val genre: List<Genre>,
+    val directors: List<ArtistVO> = emptyList(),
+    val actors: List<ArtistVO> = emptyList()
+)
 
 
 enum class Genre {
