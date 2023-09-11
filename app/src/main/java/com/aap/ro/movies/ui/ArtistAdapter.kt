@@ -14,6 +14,10 @@ interface HeaderTitleProvider {
     fun getActorText(): String
 }
 
+/**
+ * [RecyclerView.Adapter] for showing the list of artists. There are two types currently. Actors and directors. Each sublist has a header that
+ * indicates the type of the artist
+ */
 class ArtistAdapter(private val headerTitleProvider: HeaderTitleProvider): RecyclerView.Adapter<ViewHolder>() {
 
     val list = mutableListOf<Any>()
@@ -69,9 +73,6 @@ class ArtistAdapter(private val headerTitleProvider: HeaderTitleProvider): Recyc
     }
 }
 
-class ArtistViewHolder(val selectableArtistRowBinding: SelectableArtistRowBinding): ViewHolder(selectableArtistRowBinding.root) {
+class ArtistViewHolder(val selectableArtistRowBinding: SelectableArtistRowBinding): ViewHolder(selectableArtistRowBinding.root)
 
-}
-class HeaderViewHolder(val artistHeaderBinding: ArtistHeaderBinding): ViewHolder(artistHeaderBinding.root) {
-
-}
+class HeaderViewHolder(val artistHeaderBinding: ArtistHeaderBinding): ViewHolder(artistHeaderBinding.root)

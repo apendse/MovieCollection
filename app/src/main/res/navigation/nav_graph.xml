@@ -13,15 +13,18 @@
 
         <action
             android:id="@+id/action_FirstFragment_to_SecondFragment"
-            app:destination="@id/MovieDetailFragment" />
+            app:destination="@id/movieDetailFragment" />
+        <action
+            android:id="@+id/action_MovieListFragment_to_addMovieFragment"
+            app:destination="@id/addMovieFragment" />
     </fragment>
     <fragment
-        android:id="@+id/MovieDetailFragment"
+        android:id="@+id/movieDetailFragment"
         android:name="com.aap.ro.movies.ui.MovieDetailFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/fragment_movie_detail">
         <argument
-            android:name="@string/movieId"
+            android:name="movieId"
             app:argType="integer"
             android:defaultValue="-1"/>
         <action
@@ -30,7 +33,34 @@
     </fragment>
     <fragment
         android:id="@+id/addMovieFragment"
-        android:name="com.aap.ro.movies.ui.AddMovieFragment"
+        android:name="com.aap.ro.movies.ui.addmovie.AddMovieFragment"
         android:label="@string/add_movie"
-        tools:layout="@layout/fragment_add_movie" />
+        tools:layout="@layout/fragment_add_movie" >
+        <action
+            android:id="@+id/action_addMovieFragment_to_addGenreDialog"
+            app:destination="@id/addGenreDialog" />
+        <action
+            android:id="@+id/action_addMovieFragment_to_addArtistDialog"
+            app:destination="@id/addArtistDialog" />
+    </fragment>
+
+    <dialog android:id="@+id/addGenreDialog"
+        android:name="com.aap.ro.movies.ui.addmovie.AddGenreDialog"
+        android:label="AddGenreDialog"
+        >
+        <action
+            android:id="@+id/action_addGenreDialog_to_addMovieFragment"
+            app:destination="@id/addMovieFragment" />
+    </dialog>
+
+
+    <dialog android:id="@+id/addArtistDialog"
+        android:name="com.aap.ro.movies.ui.addmovie.AddArtistDialog"
+        android:label="AddGenreDialog"
+        >
+        <action
+            android:id="@+id/action_addArtistDialog_to_addMovieFragment"
+            app:destination="@id/addMovieFragment" />
+    </dialog>
+
 </navigation>

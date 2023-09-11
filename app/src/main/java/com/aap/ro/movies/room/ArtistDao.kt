@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ArtistDao {
-
     @Insert
     fun insertAll(vararg artists: Artist)
     @Query("SELECT * FROM Artist")

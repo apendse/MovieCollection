@@ -17,6 +17,12 @@ interface MovieDao {
     @Query("SELECT * FROM Movie")
     fun getMovieList(): Flow<List<Movie>>
 
+
+    @Query("SELECT * FROM Movie where name LIKE :query or release_year = :query")
+    fun getMatchingMovies(query: String): Flow<List<Movie>>
+
+
+
     @Query("SELECT COUNT(*) from Movie")
     fun getMovieCount(): Int
 
@@ -35,6 +41,7 @@ interface MovieDao {
     fun insert(movie: Movie): Long
 
     @Delete
-    fun deleteMovie(movie: Movie)
+    suspend fun deleteMovie(movie: Movie)
+
 
 }

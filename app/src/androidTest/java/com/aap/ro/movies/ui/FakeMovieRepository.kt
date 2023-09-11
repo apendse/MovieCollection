@@ -36,12 +36,13 @@ abstract class FakeMovieRepositoryModule {
 
 class TestMovieRepository @Inject constructor(): MovieRepository {
     var delay: Long = 0L
-    override fun getMovieList(): Flow<List<Movie>> {
+    override fun getMovieList(query: String): Flow<List<Movie>> {
         return flow<List<Movie>> {
             delay(delay)
             emit(listOf(Movie(1, "test", 1998, action)))
         }
     }
+
 
     override fun getMovieCount(): Int {
         runBlocking {
@@ -77,7 +78,7 @@ class TestMovieRepository @Inject constructor(): MovieRepository {
 
     }
 
-    override fun deleteMovie(id: Int) {
+    override suspend fun deleteMovie(id: Int) {
 
     }
 

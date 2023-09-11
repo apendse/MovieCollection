@@ -21,5 +21,10 @@ enum class Genre {
     SCI_FI,
     FAMILY,
     CRIME,
-    COMEDY
+    COMEDY,
+    WESTERN;
+
+    override fun toString(): String {
+        return this.name.replace('_', ' ')
+    }
 }

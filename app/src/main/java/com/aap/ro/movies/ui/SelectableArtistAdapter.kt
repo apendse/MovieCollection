@@ -9,24 +9,26 @@ import com.aap.ro.movies.data.SelectableArtist
 import com.aap.ro.movies.databinding.SelectableArtistRowBinding
 
 val diff = object : DiffUtil.ItemCallback<SelectableArtist>() {
-    override fun areItemsTheSame(oldItem: SelectableArtist, newItem: SelectableArtist) = oldItem == newItem
+    override fun areItemsTheSame(oldItem: SelectableArtist, newItem: SelectableArtist) = oldItem.artistVO.id == newItem.artistVO.id
 
-    override fun areContentsTheSame(oldItem: SelectableArtist, newItem: SelectableArtist) = areItemsTheSame(oldItem, newItem)
+    override fun areContentsTheSame(oldItem: SelectableArtist, newItem: SelectableArtist): Boolean {
+        return oldItem.selected == newItem.selected && oldItem.artistVO == newItem.artistVO
+    }
 
 
 
 }
 
 interface ArtistSelectionListener {
-    fun onArtistSelection(artist: SelectableArtist)
+    fun onArtistSelection(artist: SelectableArtist, isSelected: Boolean)
 }
 interface SelectionChangedListener {
-    fun onSelectionChanged(index: Int,)
+    fun onSelectionChanged(index: Int, checked: Boolean)
 }
 class SelectableArtistAdapter(private val artistSelectListener: ArtistSelectionListener): ListAdapter<SelectableArtist, SelectableArtistViewHolder>(diff), SelectionChangedListener {
 
-    override fun onSelectionChanged(index: Int) {
-        artistSelectListener.onArtistSelection(getItem(index))
+    override fun onSelectionChanged(index: Int, checked: Boolean) {
+        artistSelectListener.onArtistSelection(getItem(index), isSelected = checked)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SelectableArtistViewHolder {
@@ -48,8 +50,8 @@ class SelectableArtistAdapter(private val artistSelectListener: ArtistSelectionL
 
 class SelectableArtistViewHolder(val binding: SelectableArtistRowBinding, private val selectionChangedListener: SelectionChangedListener): ViewHolder(binding.root) {
     init {
-        binding.root.setOnClickListener {_ ->
-            selectionChangedListener.onSelectionChanged(adapterPosition)
+        binding.selected.setOnCheckedChangeListener {_, isChecked ->
+            selectionChangedListener.onSelectionChanged(bindingAdapterPosition, isChecked)
         }
     }
 }

@@ -2,7 +2,9 @@ package com.aap.ro.movies.viewmodel
 
 import android.util.Log
 import androidx.annotation.VisibleForTesting
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import com.aap.ro.movies.data.MovieVO
 import com.aap.ro.movies.repository.MovieRepository
 import com.aap.ro.movies.repository.MovieRepositoryImpl.Companion.getGenreAsList
@@ -27,6 +29,14 @@ class MovieListViewModel @Inject constructor(private val movieRepository: MovieR
     init {
         Log.d("YYYY", "In")
     }
+
+    private var _query: String = ""
+    var query: String
+        get() = _query
+        set(value) {
+            _query = value
+            obtainMovieList(_query)
+        }
     suspend fun loadDataIfNeeded() {
         withContext(Dispatchers.IO) {
             if (movieRepository.getMovieCount() == 0) {
@@ -39,21 +49,35 @@ class MovieListViewModel @Inject constructor(private val movieRepository: MovieR
     }
 
     @VisibleForTesting
-    val _loadingStateFlow : MutableStateFlow<Boolean> =  MutableStateFlow(true)
+    val privateLoadingStateFlow : MutableStateFlow<Boolean> =  MutableStateFlow(true)
     val loadingState: Flow<Boolean>
-        get() = _loadingStateFlow
+        get() = privateLoadingStateFlow
 
 
-    fun obtainMovieList(): Flow<List<MovieVO>> {
-        return movieRepository.getMovieList().map {
-            _loadingStateFlow.emit(false)
+    val movieListAsLiveData: LiveData<List<MovieVO>>
+        get() = obtainMovieList(query).asLiveData()
+
+    fun obtainMovieList(query: String): Flow<List<MovieVO>> {
+        return movieRepository.getMovieList("%${query}%").map {
+            privateLoadingStateFlow.emit(false)
             getMovieVOList(it)
         }
     }
     private fun getMovieVOList(input: List<Movie>): List<MovieVO> {
         return input.map {
-            MovieVO(it.id ?: -1, it.movieName ?: "", it.releaseYear ?: -1, getGenreAsList(it.genre), emptyList(), emptyList())
+            MovieVO(
+                it.id,
+                it.movieName ?: "",
+                it.releaseYear ?: -1,
+                getGenreAsList(it.genre),
+                emptyList(),
+                emptyList()
+            )
         }
     }
+
+    fun searchForMovies(query: String) =
+         obtainMovieList(query)
+
 
 }

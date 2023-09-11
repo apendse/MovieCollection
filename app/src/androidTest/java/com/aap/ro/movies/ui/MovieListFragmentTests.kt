@@ -92,7 +92,7 @@ class MovieListFragmentTests {
         val list = listOf(MovieVO(123, "name", 2023, genre = emptyList(), directors = emptyList(), actors = emptyList()))
         Log.d("YYYY", "fragment_movieList_isDisplayed before populate")
         runBlocking {
-            fragment.movieListViewModel._loadingStateFlow.emit(false)
+            fragment.movieListViewModel.privateLoadingStateFlow.emit(false)
         }
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
             fragment.populateList(list)

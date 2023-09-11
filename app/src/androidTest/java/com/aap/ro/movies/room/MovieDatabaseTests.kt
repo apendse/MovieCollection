@@ -5,7 +5,9 @@ import android.util.Log
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert
@@ -15,6 +17,7 @@ import org.junit.runner.RunWith
 import java.io.IOException
 
 @RunWith(AndroidJUnit4::class)
+
 class MovieDatabaseTests {
     private lateinit var movieDao: MovieDao
     private lateinit var artistDao: ArtistDao
@@ -40,25 +43,66 @@ class MovieDatabaseTests {
 
     @Test
     @Throws(Exception::class)
+    fun movieDao_afterPopulating_returnsCorrectList() = runBlocking {
+        // Set up a bunch of movies with
+        val movies = listOf(Movie(1, "Test1", 1990, action or thriller),
+                                Movie(2, "Test2", 1991, drama or war or fantasy),
+                                Movie(3, "Test3", 1992, romance or adventure or sciFi),
+                                Movie(4, "Test4", 1995, family)
+                                )
+        Log.d("YYYY", "before insert ")
+        movies.forEach { movie ->
+            movieDao.insert(movie)
+        }
+        val values = mutableListOf<List<Movie>>()
+        val j = launch {
+            movieDao.getMovieList().collect { list ->
+                Assert.assertEquals(4, list.size)
+                Assert.assertTrue(list.contains(movies[0]))
+                Assert.assertTrue(list.contains(movies[1]))
+                Assert.assertTrue(list.contains(movies[2]))
+                Assert.assertTrue(list.contains(movies[3]))
+                this.cancel()
+            }
+        }
+        j.join()
+    }
+
+    @Test
+    @Throws(Exception::class)
     fun verify_movieTable_movieInsertedIsCorrectlyRead() = runBlocking {
         val id = 1
         val movieName = "Test Movie"
         val year = 1999
-        val genre = 12
+        val genre = drama or war
         val movie = Movie(id, movieName, year, genre)
 
         movieDao.insert(movie)
-        Log.d("YYYY", "Inserted")
 
         val movieFromDb = movieDao.getMovieDetails(id).first()
 
         Assert.assertEquals(id, movieFromDb.id)
         Assert.assertEquals(genre, movieFromDb.genre)
         Assert.assertEquals(movieName, movieFromDb.movieName)
-
-
     }
 
+    @Test
+    @Throws(Exception::class)
+    fun verify_movieTable_movieInsertedWithoutIdIsCorrectlyRead() = runBlocking {
+        val id = 0 // id is set to zero so that the system auto increments it
+        val movieName = "Test Movie"
+        val year = 1999
+        val genre = 12
+        val movie = Movie(id, movieName, year, genre)
+
+        val idGenerated = movieDao.insert(movie)
+
+        val movieFromDb = movieDao.getMovieDetails(idGenerated.toInt()).first()
+
+        Assert.assertNotEquals(id, movieFromDb.id)
+        Assert.assertEquals(genre, movieFromDb.genre)
+        Assert.assertEquals(movieName, movieFromDb.movieName)
+    }
     @Test
     fun verify_artistTable_writtenRowIsQueriedById() {
         val artist = Artist(1, "John Wayne",1907, "Winterset, IA", 1979)

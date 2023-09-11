@@ -36,14 +36,13 @@ class MovieDetailViewModel @Inject constructor(private val movieRepository: Movi
     suspend fun getMovieDetail(movieId: Int) {
 
         movieRepository.getMovieDetail(movieId).collect { movie ->
-            val temp = movie
             movieRepository.getMovieArtists(movieId).collect() { list ->
 
                 val groups = list.groupBy { it.role }
                 val actors = getArtistGroup(groups, ACTOR)
                 val directors = getArtistGroup(groups, DIRECTOR)
                 val movieVO = MovieVO(
-                    movie.id ?: -1,
+                    movie.id,
                     movie.movieName ?: "",
                     movie.releaseYear ?: -1,
                     getGenreAsList(movie.genre),

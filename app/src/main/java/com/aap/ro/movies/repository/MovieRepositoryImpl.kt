@@ -17,6 +17,10 @@ import com.aap.ro.movies.room.romance
 import com.aap.ro.movies.room.sciFi
 import com.aap.ro.movies.room.thriller
 import com.aap.ro.movies.room.war
+import com.aap.ro.movies.room.western
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.merge
 import javax.inject.Inject
 
 /**
@@ -24,38 +28,39 @@ import javax.inject.Inject
  * annotated with \@Inject constructor annotation.
  */
 
-class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabase): MovieRepository  {
+class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabase) :
+    MovieRepository {
 
     //@Inject
     //lateinit var  database: MovieDatabase
-    override fun getMovieList() = database.movieDao().getMovieList()
+    override fun getMovieList(query: String): Flow<List<Movie>> {
+        val flow1 = if (query.isEmpty()) database.movieDao().getMovieList() else emptyFlow()
+        val flow2 = if (query.isEmpty()) emptyFlow() else database.movieDao().getMatchingMovies(query)
+        return merge(flow1, flow2)
+    }
 
     override fun getMovieCount() = database.movieDao().getMovieCount()
 
     override fun getAllArtists() = database.artistDao().getAllArtists()
     override fun getMovieDetail(id: Int) = database.movieDao().getMovieDetails(id)
-    override fun getMovieArtists(movieId: Int) = database.movieToArtistDao().getArtistsForMovie(movieId)
+    override fun getMovieArtists(movieId: Int) =
+        database.movieToArtistDao().getArtistsForMovie(movieId)
 
-    override fun addMovie(movievo: MovieVO): Long = database.movieDao().insert(convertToMovie(movievo))
-    override fun addMovieArtists(movieArtists: Array<MovieToArtist>) = database.movieToArtistDao().insertAll(movieToArtist = *movieArtists)
+    override fun addMovie(movievo: MovieVO): Long =
+        database.movieDao().insert(convertToMovie(movievo))
 
-    override fun deleteMovie(id: Int) {
-        val movie = database.movieDao().getMovieDetailsWithoutFlow(id)
-        database.movieDao().deleteMovie(movie)
-    }
+    override fun addMovieArtists(movieArtists: Array<MovieToArtist>) =
+        database.movieToArtistDao().insertAll(movieToArtist = movieArtists)
 
-    private fun convertToMovie(movievo: MovieVO) : Movie {
-        return Movie(-1, movievo.name, movievo.yearOfRelease, getGenre(movievo.genre))
-    }
-
-    private fun getGenre(list: List<Genre>): Int {
-        var mask = 0
-        genreList.forEach {
-            if (list.contains(it.second)) {
-                mask = mask or it.first
-            }
+    override suspend fun deleteMovie(id: Int) {
+        database.movieDao().getMovieDetails(id).collect{movie ->
+            database.movieDao().deleteMovie(movie)
         }
-        return mask
+
+    }
+
+    private fun convertToMovie(movievo: MovieVO): Movie {
+        return Movie(movievo.id, movievo.name, movievo.yearOfRelease, getCombinedGenreAsInt(movievo.genre))
     }
 
     override fun getMovieDatabasePopulator(): MovieDatabasePopulator {
@@ -79,7 +84,18 @@ class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabas
             family to Genre.FAMILY,
             crime to Genre.CRIME,
             comedy to Genre.COMEDY,
+            western to Genre.WESTERN
         )
+
+        fun getCombinedGenreAsInt(list: List<Genre>): Int {
+            var mask = 0
+            genreList.forEach {
+                if (list.contains(it.second)) {
+                    mask = mask or it.first
+                }
+            }
+            return mask
+        }
 
         fun getGenreAsList(g: Int): List<Genre> {
             val ret = arrayListOf<Genre>()
@@ -92,7 +108,7 @@ class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabas
         }
     }
 
-    class MovieDatabasePopulatorImpl(private val database: MovieDatabase): MovieDatabasePopulator {
+    class MovieDatabasePopulatorImpl(private val database: MovieDatabase) : MovieDatabasePopulator {
         override fun insertSampleMovieToArtist() {
             var i = 1
             val list = arrayOf(
@@ -108,7 +124,7 @@ class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabas
                 MovieToArtist(i++, 3, 8, DIRECTOR),
                 MovieToArtist(i++, 3, 9, ACTOR),
                 MovieToArtist(i++, 3, 10, ACTOR),
-                MovieToArtist(i++, 3, 11, ACTOR),
+                MovieToArtist(i, 3, 11, ACTOR),
             )
             database.movieToArtistDao().insertAll(*list)
         }
@@ -172,7 +188,7 @@ class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabas
                 Artist(i++, "Brian Dennehy", 1938, "Bridgeport, CT", 2020),
                 Artist(i++, "Keanu Reeves", 1964, "Lebanon", null),
                 Artist(i++, "Sandra Bullock", 1964, "Washington, DC", null),
-                Artist(i++, "Dennis Hopper", 1936, "Dodge City, KS", 2010),
+                Artist(i, "Dennis Hopper", 1936, "Dodge City, KS", 2010),
             )
 
             database.artistDao().insertAll(*list)

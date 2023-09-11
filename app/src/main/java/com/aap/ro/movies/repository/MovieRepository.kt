@@ -8,7 +8,7 @@ import com.aap.ro.movies.room.MovieToArtist
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
-    fun getMovieList() : Flow<List<Movie>>
+    fun getMovieList(query: String) : Flow<List<Movie>>
 
     fun getMovieCount(): Int
 
@@ -20,7 +20,7 @@ interface MovieRepository {
 
     fun addMovieArtists(movieArtists: Array<MovieToArtist>)
 
-    fun deleteMovie(id: Int)
+    suspend fun deleteMovie(id: Int)
 
     fun getMovieDatabasePopulator(): MovieDatabasePopulator
 }

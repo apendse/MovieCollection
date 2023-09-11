@@ -4,9 +4,14 @@ import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.VisibleForTesting
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -36,15 +41,36 @@ class MovieDetailFragment : Fragment(), HeaderTitleProvider {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentMovieDetailBinding.inflate(inflater, container, false)
         return binding.root
+    }
 
+    private fun createMenu() {
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.movie_detail_action_menu, menu)
+            }
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.action_edit -> {
+                        Toast.makeText(requireContext(), "Coming soon", Toast.LENGTH_SHORT).show()
+                        true
+                    }
+                    R.id.action_delete -> {
+                        deleteMovieDlg()
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
+        createMenu()
         val key = resources.getString(R.string.movieId)
 
         val movieId = arguments?.getInt(key) ?: -1
@@ -69,6 +95,7 @@ class MovieDetailFragment : Fragment(), HeaderTitleProvider {
         }
     }
 
+
     private fun deleteMovieDlg() {
         val confirmationDialog = AlertDialog.Builder(requireContext()).setMessage(getString(R.string.delete_dialog, movieDetailViewModel.getMovieName()))
                         .setPositiveButton(android.R.string.ok) { dialog: DialogInterface , _ ->
@@ -88,14 +115,16 @@ class MovieDetailFragment : Fragment(), HeaderTitleProvider {
             movieDetailViewModel.deleteMovie(movieId)
             findNavController().navigateUp()
         }
-
     }
 
     @VisibleForTesting
     fun populateMovieDetails(movie: MovieVO) {
-        binding.movieTitleWithYear.text = resources.getString(R.string.movie_title_with_year, movie.name, movie.yearOfRelease)
-        binding.genreContainer.addGenreList(movie.genre)
-        artistAdapter.setData(movie.directors, movie.actors)
+        binding.progressIndicator.visibility = View.GONE
+        if (movie.yearOfRelease > 0) {
+            binding.movieTitleWithYear.text = resources.getString(R.string.movie_title_with_year, movie.name, movie.yearOfRelease)
+            binding.genreContainer.addGenreList(movie.genre)
+            artistAdapter.setData(movie.directors, movie.actors)
+        }
     }
 
     override fun onDestroyView() {

@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    tools:context=".ui.AddMovieFragment">
+    tools:context=".ui.addmovie.AddMovieFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <EditText
@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:inputType="text"
+        android:autofillHints="@string/name_of_the_movie"
         android:hint="@string/enter_movie_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +30,27 @@
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/add_movie_title" />
 
+    <TextView
+        android:id="@+id/genre_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/select_genre"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/year_spinner" />
 
+    <com.aap.widget.selectablelist.SelectableList
+        android:id="@+id/genre_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/genre_label"
+        tools:layout_editor_absoluteY="16dp" />
+    <!--
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/genre_picker"
         android:layout_width="0dp"
@@ -39,10 +60,10 @@
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/genre_label" />
-
+!-->
     <Button
         android:id="@+id/save_movie"
         android:layout_width="wrap_content"
@@ -83,15 +104,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/select_actors"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/genre_picker" />
+        app:layout_constraintTop_toBottomOf="@+id/genre_list" />
 
-    <TextView
-        android:id="@+id/genre_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/select_genre"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/year_spinner" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
