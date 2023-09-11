@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="drop_down_title">Select Items</string>
+    <string name="click_to_add_items">Click here to add items</string>
+</resources>
