@@ -57,7 +57,7 @@ class MovieListAdapter(private val movieClickListener: MovieClickListener): List
 class MovieListEntryViewHolder(val binding: MovieListRowBinding, onClick: (Int) -> Unit): RecyclerView.ViewHolder(binding.root) {
     init {
         binding.root.setOnClickListener{
-            onClick(adapterPosition)
+            onClick(bindingAdapterPosition)
         }
     }
 }
