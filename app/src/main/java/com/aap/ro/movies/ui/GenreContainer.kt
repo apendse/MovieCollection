@@ -26,7 +26,7 @@ class GenreContainer @JvmOverloads constructor(context: Context, attrs: Attribut
 
     private fun ViewGroup.createChip(genre: Genre): TextView {
         val binding = GenreChipBinding.inflate(LayoutInflater.from(context), this, false )
-        binding.chip.text = genre.name
+        binding.chip.text = genre.toString()
         return binding.root
     }
 }

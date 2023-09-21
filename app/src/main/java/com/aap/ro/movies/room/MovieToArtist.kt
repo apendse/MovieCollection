@@ -2,10 +2,12 @@ package com.aap.ro.movies.room
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "movie_to_artist",
+    indices = [Index(value = ["movieId", "artistId"], unique = true) ],
     foreignKeys = [
         ForeignKey(
             entity = Artist::class,

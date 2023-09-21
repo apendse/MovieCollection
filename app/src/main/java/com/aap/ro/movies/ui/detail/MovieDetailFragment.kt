@@ -1,4 +1,4 @@
-package com.aap.ro.movies.ui
+package com.aap.ro.movies.ui.detail
 
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -20,9 +20,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.aap.ro.movies.R
 import com.aap.ro.movies.data.MovieVO
 import com.aap.ro.movies.databinding.FragmentMovieDetailBinding
-import com.aap.ro.movies.viewmodel.MovieDetailViewModel
+import com.aap.ro.movies.imageloader.Imageloader
+import com.aap.ro.movies.ui.ArtistAdapter
+import com.aap.ro.movies.ui.HeaderTitleProvider
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -31,6 +34,9 @@ import kotlinx.coroutines.launch
 class MovieDetailFragment : Fragment(), HeaderTitleProvider {
 
     private var _binding: FragmentMovieDetailBinding? = null
+    @Inject
+    lateinit var imageLoader: Imageloader
+
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -87,6 +93,7 @@ class MovieDetailFragment : Fragment(), HeaderTitleProvider {
     }
 
     private fun initUi() {
+
         artistAdapter = ArtistAdapter(this)
         binding.artisList.layoutManager = LinearLayoutManager(requireContext())
         binding.artisList.adapter = artistAdapter
@@ -120,6 +127,9 @@ class MovieDetailFragment : Fragment(), HeaderTitleProvider {
     @VisibleForTesting
     fun populateMovieDetails(movie: MovieVO) {
         binding.progressIndicator.visibility = View.GONE
+        movie.moviePoster?.let {
+            imageLoader.loadImageInto(binding.moviePoster, it)
+        }
         if (movie.yearOfRelease > 0) {
             binding.movieTitleWithYear.text = resources.getString(R.string.movie_title_with_year, movie.name, movie.yearOfRelease)
             binding.genreContainer.addGenreList(movie.genre)

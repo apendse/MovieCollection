@@ -27,5 +27,11 @@
     <string name="search_title">Search</string>
     <string name="click_to_add_genre">Click to add genre</string>
     <string name="genre_list_title">Select and add genre</string>
+    <string name="list">List</string>
+    <string name="grid">Grid</string>
     <string name="name_of_the_movie">Name of the movie</string>
+    <string name="movie_image" translatable="false">MovieImage</string>
+    <string name="click_here_to_select_actors">Click here to select actors</string>
+    <string name="done">Done</string>
+    <string name="artist_hint">Start typing artist names</string>
 </resources>

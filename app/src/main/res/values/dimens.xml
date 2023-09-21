@@ -1,3 +1,5 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="list_selection_height">32dp</dimen>
+    <dimen name="movie_list_top_margin">40dp</dimen>
 </resources>

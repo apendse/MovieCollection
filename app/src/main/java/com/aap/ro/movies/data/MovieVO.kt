@@ -6,7 +6,9 @@ data class MovieVO(
     val yearOfRelease: Int,
     val genre: List<Genre>,
     val directors: List<ArtistVO> = emptyList(),
-    val actors: List<ArtistVO> = emptyList()
+    val actors: List<ArtistVO> = emptyList(),
+    val thumbNail: String? = null,
+    val moviePoster: String? = null
 )
 
 

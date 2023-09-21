@@ -22,4 +22,7 @@ data class Movie (
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "id") val id: Int,
     @ColumnInfo(name = "name") val movieName: String?,
     @ColumnInfo(name = "release_year") val releaseYear: Int?,
-    @ColumnInfo(name = "genre") val genre: Int)
+    @ColumnInfo(name = "genre") val genre: Int,
+    @ColumnInfo(name="thumbnail") val thumbnailUrl: String? = null, // small movie thumbnail
+    @ColumnInfo(name="poster") val poster: String? = null, // poster shown in detailed view
+)

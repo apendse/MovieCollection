@@ -36,17 +36,18 @@ import java.util.Calendar
 
 /**
  * A simple [Fragment] subclass.
- * Use the [AddMovieFragment.newInstance] factory method to
+ * Use the [AddEditMovieFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
 @AndroidEntryPoint
-class AddMovieFragment : Fragment(), GenreClickListener, ArtistSelectionListener {
+class AddEditMovieFragment : Fragment(), GenreClickListener, ArtistSelectionListener {
 
     private var _binding: FragmentAddMovieBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var artistAdapter: SelectableArtistAdapter
     private lateinit var genreAdapter: GenreAdapter
+    private var selectedArtists: List<SelectableArtist> = emptyList()
 
     val viewModel by viewModels<AddMovieViewModel>()
 
@@ -73,7 +74,7 @@ class AddMovieFragment : Fragment(), GenreClickListener, ArtistSelectionListener
     }
 
     override fun onGenreClicked(selectableGenre: SelectableGenre) {
-        //viewModel.onGenreClicked(selectableGenre)
+        // NO OP
     }
 
     private fun loadGenresInSelectableList() {
@@ -90,6 +91,18 @@ class AddMovieFragment : Fragment(), GenreClickListener, ArtistSelectionListener
             getAvailableYears()
         )
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.actorSelectDialog.setOnClickListener {
+                    val artistListForDialog = selectedArtists.toMutableList()
+                    val alert = AddArtistDialogAlert.getArtistDialog(requireContext(), artistListForDialog)
+                    alert.window?.setLayout(400, 600)
+                    alert.setOnDismissListener{
+                        artistListForDialog.forEach {
+                            viewModel.changeArtistSelection(it, it.selected)
+                        }
+
+                    }
+                    alert.show()
+                }
         binding.yearSpinner.adapter = adapter
         binding.yearSpinner.onItemSelectedListener = object : OnItemSelectedListener {
             override fun onItemSelected(
@@ -106,11 +119,8 @@ class AddMovieFragment : Fragment(), GenreClickListener, ArtistSelectionListener
             }
 
         }
-
-
         binding.actors.layoutManager =
             LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-
 
         loadGenresInSelectableList()
         artistAdapter = SelectableArtistAdapter(this)
@@ -155,7 +165,6 @@ class AddMovieFragment : Fragment(), GenreClickListener, ArtistSelectionListener
         }
         lifecycleScope.launch {
             viewModel.uiState.collect {
-                Log.d("YYYY", "Collect triggered")
                 populateData(it)
             }
         }
@@ -163,6 +172,7 @@ class AddMovieFragment : Fragment(), GenreClickListener, ArtistSelectionListener
     }
 
     private fun populateData(addMovieData: AddMovieData) {
+        selectedArtists = addMovieData.selectedArtistList
         artistAdapter.submitList(addMovieData.selectedArtistList.toMutableList())
     }
 
@@ -170,7 +180,7 @@ class AddMovieFragment : Fragment(), GenreClickListener, ArtistSelectionListener
 
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            AddMovieFragment()
+            AddEditMovieFragment()
     }
 }
 

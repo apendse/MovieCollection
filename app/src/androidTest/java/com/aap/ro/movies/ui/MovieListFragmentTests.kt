@@ -12,12 +12,17 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.aap.ro.movies.R
 import com.aap.ro.movies.data.MovieVO
 import com.aap.ro.movies.repository.MovieRepository
+import com.aap.ro.movies.ui.movielist.MovieListFragment
 import com.aap.ro.movies.ui.test.TestActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestScope
 import org.hamcrest.CoreMatchers.not
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -90,11 +95,20 @@ class MovieListFragmentTests {
         val scenario = rule.scenario
         scenario.moveToState(Lifecycle.State.RESUMED)
         val list = listOf(MovieVO(123, "name", 2023, genre = emptyList(), directors = emptyList(), actors = emptyList()))
-        Log.d("YYYY", "fragment_movieList_isDisplayed before populate")
+        val testScope = TestScope()
+        testScope.launch {
+            for (i in 0..10) {
+                if (fragment.searchView != null) {
+                    delay(500L)
+                }
+            }
+        }
+        Assert.assertNotNull(fragment.searchView)
         runBlocking {
             fragment.movieListViewModel.privateLoadingStateFlow.emit(false)
         }
         InstrumentationRegistry.getInstrumentation().runOnMainSync {
+
             fragment.populateList(list)
         }
 

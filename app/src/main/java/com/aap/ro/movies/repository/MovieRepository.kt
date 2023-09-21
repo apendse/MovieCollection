@@ -16,7 +16,7 @@ interface MovieRepository {
     fun getMovieDetail(id: Int) : Flow<Movie>
     fun getMovieArtists(movieId: Int) : Flow<List<ArtistWithRole>>
 
-    fun addMovie(movievo: MovieVO): Long
+    fun addMovie(movieVo: MovieVO): Long
 
     fun addMovieArtists(movieArtists: Array<MovieToArtist>)
 

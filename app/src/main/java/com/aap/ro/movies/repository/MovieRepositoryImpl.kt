@@ -35,7 +35,8 @@ class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabas
     //lateinit var  database: MovieDatabase
     override fun getMovieList(query: String): Flow<List<Movie>> {
         val flow1 = if (query.isEmpty()) database.movieDao().getMovieList() else emptyFlow()
-        val flow2 = if (query.isEmpty()) emptyFlow() else database.movieDao().getMatchingMovies(query)
+        val flow2 =
+            if (query.isEmpty()) emptyFlow() else database.movieDao().getMatchingMovies(query)
         return merge(flow1, flow2)
     }
 
@@ -53,14 +54,21 @@ class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabas
         database.movieToArtistDao().insertAll(movieToArtist = movieArtists)
 
     override suspend fun deleteMovie(id: Int) {
-        database.movieDao().getMovieDetails(id).collect{movie ->
+        database.movieDao().getMovieDetails(id).collect { movie ->
             database.movieDao().deleteMovie(movie)
         }
 
     }
 
     private fun convertToMovie(movievo: MovieVO): Movie {
-        return Movie(movievo.id, movievo.name, movievo.yearOfRelease, getCombinedGenreAsInt(movievo.genre))
+        return Movie(
+            movievo.id,
+            movievo.name,
+            movievo.yearOfRelease,
+            getCombinedGenreAsInt(movievo.genre),
+            null,
+            null
+        )
     }
 
     override fun getMovieDatabasePopulator(): MovieDatabasePopulator {
@@ -124,24 +132,124 @@ class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabas
                 MovieToArtist(i++, 3, 8, DIRECTOR),
                 MovieToArtist(i++, 3, 9, ACTOR),
                 MovieToArtist(i++, 3, 10, ACTOR),
-                MovieToArtist(i, 3, 11, ACTOR),
-            )
+                MovieToArtist(i++, 3, 11, ACTOR),
+
+                MovieToArtist(i++, 10, 28, ACTOR),
+                MovieToArtist(i++, 10, 29, ACTOR),
+                MovieToArtist(i++, 10, 30, ACTOR),
+                MovieToArtist(i++, 10, 31, DIRECTOR),
+
+                )
             database.movieToArtistDao().insertAll(*list)
         }
 
         override fun insertSampleMovies() {
-
+            var i = 1
             val list = arrayOf(
-                Movie(1, "Die Hard", 1989, action + thriller),
-                Movie(2, "Saving Private Ryan ", 1998, drama + war),
-                Movie(3, "Ghost", 1999, drama + fantasy + romance),
-                Movie(4, "Indiana Jones and the Last Crusade", 1989, action + adventure + fantasy),
-                Movie(5, "Jurassic Park", 1993, action + adventure + sciFi),
-                Movie(6, "Goldfinger", 1964, action + adventure + thriller),
-                Movie(7, "Sound of Music", 1965, drama + family),
-                Movie(8, "Pulp Fiction", 1994, drama + crime),
-                Movie(9, "Coming to America", 1988, comedy + romance),
-                Movie(10, "Titanic", 1997, drama + romance),
+                Movie(
+                    i++,
+                    "Die Hard",
+                    1989,
+                    action + thriller,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/yFihWxQcmqcaBR31QM6Y8gT6aYV.jpg",
+                    "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/yFihWxQcmqcaBR31QM6Y8gT6aYV.jpg"
+                ),
+                Movie(
+                    i++,
+                    "Saving Private Ryan ",
+                    1998,
+                    drama + war,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/uqx37cS8cpHg8U35f9U5IBlrCV3.jpg",
+                    null
+                ),
+                Movie(
+                    i++,
+                    "Ghost",
+                    1999,
+                    drama + fantasy + romance,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/w9RaPHov8oM5cnzeE27isnFMsvS.jpg",
+                    null
+                ),
+                Movie(
+                    i++,
+                    "Indiana Jones and the Last Crusade",
+                    1989,
+                    action + adventure + fantasy,
+                    null,
+                    null
+                ),
+                Movie(
+                    i++,
+                    "Jurassic Park",
+                    1993,
+                    action + adventure + sciFi,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/oU7Oq2kFAAlGqbU4VoAE36g4hoI.jpg",
+                    "https://www.themoviedb.org/t/p/w600_and_h900_bestv2/oU7Oq2kFAAlGqbU4VoAE36g4hoI.jpg"
+                ),
+                Movie(
+                    i++,
+                    "Goldfinger",
+                    1964,
+                    action + adventure + thriller,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/6fTzum7gSpLWww26WvWjETNqfD9.jpg",
+                    null
+                ),
+                Movie(
+                    i++,
+                    "Sound of Music",
+                    1965,
+                    drama + family,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/pDuoh2fKuacDXYtpREJysMOzQmS.jpg",
+                    null
+                ),
+                Movie(
+                    i++,
+                    "Pulp Fiction",
+                    1994,
+                    drama + crime,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg",
+                    null
+                ),
+                Movie(
+                    i++,
+                    "Coming to America",
+                    1988,
+                    comedy + romance,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/djRAvxyvvN2yqlJKDbT3uy4vOBw.jpg",
+                    null
+                ),
+                Movie(
+                    i++,
+                    "Titanic",
+                    1997,
+                    drama + romance,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg",
+                    null
+                ),
+                Movie(
+                    i++,
+                    "Jaws",
+                    1975,
+                    adventure + thriller,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/lxM6kqilAdpdhqUl2biYp5frUxE.jpg",
+                    null
+                ),
+                Movie(
+                    i++,
+                    "First Blood",
+                    1982,
+                    action + adventure + thriller,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/bGIDYYOX7Cj1o7W8JiwHd3TzJVw.jpg",
+                    null
+                ),
+                Movie(
+                    i++,
+                    "Ghostbusters",
+                    1984,
+                    action + comedy + fantasy,
+                    "https://www.themoviedb.org/t/p/w94_and_h141_bestv2/3EYgeouoO5hUHF9eYpQ2ADsJ9ba.jpg",
+                    null
+                ),
             )
 
             database.movieDao().insertAll(*list)
@@ -183,12 +291,14 @@ class MovieRepositoryImpl @Inject constructor(private val database: MovieDatabas
                 Artist(i++, "Leonardo DiCaprio", 1974, "Los Angeles, CA", null),
                 Artist(i++, "Kate Winslet", 1975, "UK", null),
                 Artist(i++, "Billy Zane", 1966, "Chicago, IL", null),
+                Artist(i++, "James Cameron", 1954, "Ontario, Canada", null),
 
                 Artist(i++, "Sylvester Stallone", 1946, "New York, NY", null),
                 Artist(i++, "Brian Dennehy", 1938, "Bridgeport, CT", 2020),
+                Artist(i++, "Ted Kotcheff", 1931, "Toronto, Canada", null),
                 Artist(i++, "Keanu Reeves", 1964, "Lebanon", null),
                 Artist(i++, "Sandra Bullock", 1964, "Washington, DC", null),
-                Artist(i, "Dennis Hopper", 1936, "Dodge City, KS", 2010),
+                Artist(i++, "Dennis Hopper", 1936, "Dodge City, KS", 2010),
             )
 
             database.artistDao().insertAll(*list)

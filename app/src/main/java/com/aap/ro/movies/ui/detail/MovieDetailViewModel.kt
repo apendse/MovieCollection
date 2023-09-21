@@ -1,4 +1,4 @@
-package com.aap.ro.movies.viewmodel
+package com.aap.ro.movies.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -47,7 +47,8 @@ class MovieDetailViewModel @Inject constructor(private val movieRepository: Movi
                     movie.releaseYear ?: -1,
                     getGenreAsList(movie.genre),
                     directors,
-                    actors
+                    actors,
+                    moviePoster = movie.poster
                 )
                 _uiState.emit(movieVO)
             }

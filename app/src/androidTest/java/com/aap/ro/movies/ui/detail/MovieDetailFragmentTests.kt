@@ -1,4 +1,4 @@
-package com.aap.ro.movies.ui
+package com.aap.ro.movies.ui.detail
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -7,6 +7,7 @@ import com.aap.ro.movies.repository.MovieRepository
 import com.aap.ro.movies.ui.test.TestActivity
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.runner.RunWith
@@ -40,6 +41,7 @@ class MovieDetailFragmentTests {
         }
     }
 
+    @After
     fun tearDown() {
         val scenario = rule.scenario
 

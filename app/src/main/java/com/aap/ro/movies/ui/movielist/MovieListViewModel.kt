@@ -1,4 +1,4 @@
-package com.aap.ro.movies.viewmodel
+package com.aap.ro.movies.ui.movielist
 
 import android.util.Log
 import androidx.annotation.VisibleForTesting
@@ -19,7 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieListViewModel @Inject constructor(private val movieRepository: MovieRepository): ViewModel() {
-
+    val queryStringFlow = MutableStateFlow("")
     //@Inject
     //lateinit
 //    val movieList: Flow<List<MovieVO>> = movieRepository.getMovieList().map {
@@ -54,8 +54,6 @@ class MovieListViewModel @Inject constructor(private val movieRepository: MovieR
         get() = privateLoadingStateFlow
 
 
-    val movieListAsLiveData: LiveData<List<MovieVO>>
-        get() = obtainMovieList(query).asLiveData()
 
     fun obtainMovieList(query: String): Flow<List<MovieVO>> {
         return movieRepository.getMovieList("%${query}%").map {
@@ -71,7 +69,8 @@ class MovieListViewModel @Inject constructor(private val movieRepository: MovieR
                 it.releaseYear ?: -1,
                 getGenreAsList(it.genre),
                 emptyList(),
-                emptyList()
+                emptyList(),
+                it.thumbnailUrl
             )
         }
     }

@@ -10,6 +10,7 @@ import com.aap.ro.movies.room.Movie
 import com.aap.ro.movies.room.action
 import com.aap.ro.movies.room.drama
 import com.aap.ro.movies.room.western
+import com.aap.ro.movies.ui.detail.MovieDetailViewModel
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.coVerify
